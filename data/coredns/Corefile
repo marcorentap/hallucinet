@@ -1,0 +1,8 @@
+. {
+    hosts /data/hosts {
+        ttl 5
+    	reload 5s
+    }
+	reload 5s
+    forward . 8.8.8.8
+}
