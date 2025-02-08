@@ -1,89 +1,56 @@
 package main
 
 import (
-	"context"
+	"github.com/marcorentap/hallucinet/backend/client"
+	"github.com/marcorentap/hallucinet/backend/core"
+	"github.com/marcorentap/hallucinet/backend/mapper"
 	"log"
-
-	"github.com/docker/docker/api/types/events"
-	"github.com/docker/docker/api/types/filters"
-	"github.com/docker/docker/api/types/network"
-	"github.com/docker/docker/client"
-	"github.com/marcorentap/hallucinet/backend/internal/mapper"
 )
 
-type HallucinateConfig struct {
-	networkName string
-	mapper      mapper.Mapper
-}
-
-var config HallucinateConfig
-
-func handleExistingContainers(cli *client.Client, ctx context.Context) {
-	networkName := config.networkName
-	mapper := config.mapper
-	ins, err := cli.NetworkInspect(ctx, networkName, network.InspectOptions{})
-	if err != nil {
-		log.Fatalf("Cannot inspect network %v: %v", networkName, err)
-	}
-
-	for containerID := range ins.Containers {
-		mapper.AddContainer(containerID)
+func handleExistingContainers(hctx core.HallucinetContext) {
+	client := hctx.Client
+	mapper := hctx.Mapper
+	for _, container := range client.GetContainers() {
+		mapper.AddContainer(container)
 	}
 }
 
-func handleConnectionEvents(cli *client.Client, ctx context.Context) {
-	mapper := config.mapper
-	eventFilters := filters.NewArgs(
-		filters.Arg("type", "network"),
-		filters.Arg("event", "connect"),
-		filters.Arg("event", "disconnect"),
-	)
-	msgChan, errChan := cli.Events(ctx, events.ListOptions{Filters: eventFilters})
+func handleContainerEvents(hctx core.HallucinetContext) {
+	mapper := hctx.Mapper
+	events := hctx.Client.GetEvents()
 
-	for {
-		select {
-		case msg := <-msgChan:
-			attr := msg.Actor.Attributes
-			action := msg.Action
-
-			networkName := attr["name"]
-			if networkName != config.networkName {
-				continue
-			}
-
-			containerID := attr["container"]
-			if action == events.ActionConnect {
-				mapper.AddContainer(containerID)
-			} else if action == events.ActionDisconnect {
-				mapper.RemoveContainer(containerID)
-			}
-
-			mapper.ToHosts()
-
-		case err := <-errChan:
-			log.Panicf("Cannot handle Docker events: %v\n", err)
+	for event := range events {
+		switch event.EventType {
+		case core.EventConnected:
+			mapper.AddContainer(event.ContainerID)
+		case core.EventDisconnected:
+			mapper.RemoveContainer(event.ContainerID)
 		}
-	}
-}
 
-func createDockerClient() *client.Client {
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-	if err != nil {
-		log.Panicf("Cannot create Docker client: %v\n", err)
+		log.Printf("%v", mapper.ToHosts())
 	}
-	return cli
 }
 
 func main() {
-	ctx := context.Background()
-	cli := createDockerClient()
-	defer cli.Close()
-
-	config = HallucinateConfig{
-		networkName: "hallucinet",
-		mapper:      mapper.NewContainerNameMapper(ctx, cli),
+	hctx := core.HallucinetContext{}
+	hctx.Config = core.HallucinetConfig{
+		Client:      "docker",
+		Mapper:      "container_name",
+		NetworkName: "hallucinet",
 	}
 
-	handleExistingContainers(cli, ctx)
-	handleConnectionEvents(cli, ctx)
+	if hctx.Config.Client == "docker" {
+		hctx.Client = client.NewDockerContainerClient(hctx)
+	} else {
+		log.Panicf("Unimplemented container client %v\n", hctx.Config.Client)
+	}
+
+	if hctx.Config.Mapper == "container_name" {
+		hctx.Mapper = mapper.NewContainerNameMapper(hctx)
+	} else {
+		log.Panicf("Unimplemented mapper %v\n", hctx.Config.Client)
+	}
+
+	handleExistingContainers(hctx)
+	handleContainerEvents(hctx)
 }
