@@ -13,6 +13,10 @@ type Mapper interface {
 	ToHosts() string
 }
 
+type Committer interface {
+	Commit()
+}
+
 type ContainerEvent struct {
 	ContainerID string
 	EventType   ContainerEventType
@@ -30,10 +34,12 @@ type HallucinetConfig struct {
 	Client      string
 	Mapper      string
 	NetworkName string
+	Committer   string
 }
 
 type HallucinetContext struct {
-	Config HallucinetConfig
-	Client ContainerClient
-	Mapper Mapper
+	Config    HallucinetConfig
+	Client    ContainerClient
+	Mapper    Mapper
+	Committer Committer
 }

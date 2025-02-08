@@ -1,10 +1,12 @@
 package main
 
 import (
+	"log"
+
 	"github.com/marcorentap/hallucinet/backend/client"
+	"github.com/marcorentap/hallucinet/backend/committer"
 	"github.com/marcorentap/hallucinet/backend/core"
 	"github.com/marcorentap/hallucinet/backend/mapper"
-	"log"
 )
 
 func handleExistingContainers(hctx core.HallucinetContext) {
@@ -27,7 +29,7 @@ func handleContainerEvents(hctx core.HallucinetContext) {
 			mapper.RemoveContainer(event.ContainerID)
 		}
 
-		log.Printf("%v", mapper.ToHosts())
+		hctx.Committer.Commit()
 	}
 }
 
@@ -37,6 +39,7 @@ func main() {
 		Client:      "docker",
 		Mapper:      "container_name",
 		NetworkName: "hallucinet",
+		Committer:   "hosts",
 	}
 
 	if hctx.Config.Client == "docker" {
@@ -48,7 +51,13 @@ func main() {
 	if hctx.Config.Mapper == "container_name" {
 		hctx.Mapper = mapper.NewContainerNameMapper(hctx)
 	} else {
-		log.Panicf("Unimplemented mapper %v\n", hctx.Config.Client)
+		log.Panicf("Unimplemented mapper %v\n", hctx.Config.Mapper)
+	}
+
+	if hctx.Config.Committer == "hosts" {
+		hctx.Committer = committer.NewHostsCommitter(hctx)
+	} else {
+		log.Panicf("Unimplemented committer %v\n", hctx.Config.Committer)
 	}
 
 	handleExistingContainers(hctx)

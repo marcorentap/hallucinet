@@ -18,7 +18,8 @@ services:
     build: ./backend
     restart: always
     volumes:
-      - ./data/backend:/data
+      - ./data/backend:/data/backend
+      - ./data/coredns:/data/coredns
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - hallucinet
