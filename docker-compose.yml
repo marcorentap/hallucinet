@@ -1,6 +1,7 @@
 services:
-  coredns:
+  dns:
     image: coredns/coredns:1.12.0
+    container_name: hallucinet-dns
     restart: always
     volumes:
       - ./data/coredns:/data
@@ -10,7 +11,10 @@ services:
       - "-conf"
       - "/data/Corefile"
   backend:
+    depends_on:
+      - dns
     image: marcorentap/hallucinet-backend
+    container_name: hallucinet-backend
     build: ./backend
     restart: always
     volumes:
