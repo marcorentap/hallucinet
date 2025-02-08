@@ -15,6 +15,7 @@ func handleExistingContainers(hctx core.HallucinetContext) {
 	for _, container := range client.GetContainers() {
 		mapper.AddContainer(container)
 	}
+	hctx.Committer.Commit()
 }
 
 func handleContainerEvents(hctx core.HallucinetContext) {
