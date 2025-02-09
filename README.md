@@ -55,3 +55,10 @@ docker run -it --rm --network hallucinet --name myapp nginx
 
 Your container will now be accessible at `myapp.test`. 
 
+If you also want to make it accessible from other containers on the network, modify `/etc/docker/daemon.json` and add:
+
+```json
+{
+  "dns": ["192.168.100.2", "8.8.8.8"]
+}
+```
