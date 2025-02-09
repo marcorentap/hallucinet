@@ -6,7 +6,8 @@ services:
     volumes:
       - ./data/coredns:/data
     networks:
-      - hallucinet
+      hallucinet:
+        ipv4_address: 192.168.100.2
     command:
       - "-conf"
       - "/data/Corefile"
@@ -22,11 +23,12 @@ services:
       - ./data/coredns:/data/coredns
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - hallucinet
+      hallucinet:
+        ipv4_address: 192.168.100.3
       
 networks:
   hallucinet:
     name: hallucinet
     ipam:
       config:
-        - subnet: ${HALLUCINATE_SUBNET:-192.168.100.0/24}
+        - subnet: 192.168.100.0/24
