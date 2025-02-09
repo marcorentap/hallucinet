@@ -1,6 +1,6 @@
 # Hallucinet
 
-Hallucinet allows you to use `.test` domain names for your Docker containers simply by starting them on the `hallucinet` Docker network.
+Hallucinet allows you to use `.test` domain names for your Docker containers simply by connecting them on the `hallucinet` Docker network.
 
 ## Features
 - Automatic DNS resolution for `.test` domains within Docker.
