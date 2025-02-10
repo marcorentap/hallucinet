@@ -2,11 +2,12 @@ package main
 
 import (
 	"log"
+	"os"
 
-	"github.com/marcorentap/hallucinet/backend/client"
-	"github.com/marcorentap/hallucinet/backend/committer"
-	"github.com/marcorentap/hallucinet/backend/core"
-	"github.com/marcorentap/hallucinet/backend/mapper"
+	"github.com/marcorentap/hallucinet/client"
+	"github.com/marcorentap/hallucinet/committer"
+	"github.com/marcorentap/hallucinet/core"
+	"github.com/marcorentap/hallucinet/mapper"
 )
 
 func handleExistingContainers(hctx core.HallucinetContext) {
@@ -34,13 +35,23 @@ func handleContainerEvents(hctx core.HallucinetContext) {
 	}
 }
 
+func getEnvOrDefault(envar string, def string) string {
+	val, present := os.LookupEnv(envar)
+	if !present {
+		return def
+	}
+	return val
+}
+
 func main() {
 	hctx := core.HallucinetContext{}
 	hctx.Config = core.HallucinetConfig{
-		Client:      "docker",
-		Mapper:      "container_name",
-		NetworkName: "hallucinet",
-		Committer:   "hosts",
+		Client:      getEnvOrDefault("CLIENT", "docker"),
+		Mapper:      getEnvOrDefault("MAPPER", "container_name"),
+		NetworkName: getEnvOrDefault("NETWORK", "hallucinet"),
+		Committer:   getEnvOrDefault("COMMITTER", "hosts"),
+		Suffix:      getEnvOrDefault("SUFFIX", ".test"),
+		HostsPath:   "/var/hallucinet/hosts",
 	}
 
 	if hctx.Config.Client == "docker" {

@@ -1,5 +1,5 @@
 test {
-    hosts /data/hosts {
+    hosts /var/hallucinet/hosts {
         ttl 5
     	reload 5s
     }

@@ -8,7 +8,7 @@ import (
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
-	"github.com/marcorentap/hallucinet/backend/core"
+	"github.com/marcorentap/hallucinet/core"
 )
 
 type DockerContainerClient struct {

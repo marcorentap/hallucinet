@@ -1,4 +1,4 @@
-module github.com/marcorentap/hallucinet/backend
+module github.com/marcorentap/hallucinet
 
 go 1.23
 

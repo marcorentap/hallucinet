@@ -35,6 +35,8 @@ type HallucinetConfig struct {
 	Mapper      string
 	NetworkName string
 	Committer   string
+	Suffix      string
+	HostsPath   string
 }
 
 type HallucinetContext struct {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/marcorentap/hallucinet/backend/core"
+	"github.com/marcorentap/hallucinet/core"
 )
 
 type mappingEntry struct {
@@ -27,7 +27,7 @@ func (m *ContainerNameMapper) AddContainer(containerID string) {
 	containerName := client.GetContainerName(containerID)
 	containerAddr := client.GetContainerAddr(containerID)
 	m.mapping[containerID] = mappingEntry{
-		domainName: containerName[1:] + ".test",
+		domainName: containerName[1:] + m.hctx.Config.Suffix,
 		address:    containerAddr,
 	}
 }

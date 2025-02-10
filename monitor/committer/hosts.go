@@ -1,7 +1,7 @@
 package committer
 
 import (
-	"github.com/marcorentap/hallucinet/backend/core"
+	"github.com/marcorentap/hallucinet/core"
 	"log"
 	"os"
 )
@@ -13,7 +13,7 @@ type HostsCommitter struct {
 
 func NewHostsCommitter(hctx core.HallucinetContext) *HostsCommitter {
 	return &HostsCommitter{
-		hostsPath: "/data/coredns/hosts",
+		hostsPath: hctx.Config.HostsPath,
 		hctx:      hctx,
 	}
 }
