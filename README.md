@@ -1,10 +1,10 @@
-# HalluciNet  
+# Hallucinet  
 
-HalluciNet allows you to use `.test` domain names for your Docker containers simply by connecting them to a Docker network.  
+Hallucinet allows you to use `.test` domain names for your Docker containers simply by connecting them to a Docker network.  
 
 ## Usage  
 
-### 1. Create a Network and Set HalluciNet's IP Address  
+### 1. Create a Network and Set Hallucinet's IP Address  
 
 Example `docker-compose.yaml`:  
 
@@ -29,9 +29,9 @@ networks:
         - subnet: 192.168.100.0/24
 ```
 
-This will start HalluciNet on `192.168.100.2`.  
+This will start Hallucinet on `192.168.100.2`.  
 
-### 2. Configure Your System to Use HalluciNet  
+### 2. Configure Your System to Use Hallucinet  
 
 #### On Systemd-Based Distributions  
 If your system uses `systemd-resolved`, modify `/etc/systemd/resolved.conf`:  
@@ -55,9 +55,9 @@ If your system uses `systemd-resolved`, modify `/etc/systemd/resolved.conf`:
    resolvectl status
    ```
 
-### 3. Running Containers with HalluciNet  
+### 3. Running Containers with Hallucinet  
 
-To use HalluciNet's `.test` domains, connect your containers to the network.  
+To use Hallucinet's `.test` domains, connect your containers to the network.  
 
 Run a container with:  
 
