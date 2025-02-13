@@ -35,6 +35,11 @@ type Entry struct {
 	ContainerIP   string
 }
 
+type ResponsePayload struct {
+	HallucinetNetwork string
+	Networks          map[string][]Entry
+}
+
 func getNetworkEntries(hctx types.HallucinetContext, networkName string) []Entry {
 	db := hctx.DB
 	query := `SELECT container_id, container_name, container_ip FROM hallucinet where network_name = ?`
@@ -63,18 +68,31 @@ func getNetworkEntries(hctx types.HallucinetContext, networkName string) []Entry
 
 func Serve(hctx types.HallucinetContext) {
 	handler := func(res http.ResponseWriter, req *http.Request) {
-		ret := make(map[string][]Entry)
-		networks := getNetworks(hctx)
-		for _, network := range networks {
-			ret[network] = getNetworkEntries(hctx, network)
+		var payload ResponsePayload
+		res.Header().Set("Access-Control-Allow-Origin", "*")
+		res.Header().Set("Access-Control-Allow-Methods", "GET")
+		res.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		// Handle preflight requests
+		if req.Method == "OPTIONS" {
+			res.WriteHeader(http.StatusNoContent)
+			return
 		}
 
-		jsonResponse, err := json.MarshalIndent(ret, "", "  ")
+		networks := make(map[string][]Entry)
+		networkNames := getNetworks(hctx)
+		for _, network := range networkNames {
+			networks[network] = getNetworkEntries(hctx, network)
+		}
+
+		payload.Networks = networks
+		payload.HallucinetNetwork = hctx.Config.NetworkName
+		jsonPayload, err := json.MarshalIndent(payload, "", "  ")
 		if err != nil {
-			log.Panicf("Cannot marshal data %v: %v\n", ret, jsonResponse)
+			log.Panicf("Cannot marshal data %v: %v\n", payload, jsonPayload)
 		}
 
-		fmt.Fprintln(res, string(jsonResponse))
+		fmt.Fprintln(res, string(jsonPayload))
 	}
 	http.HandleFunc("/", handler)
 	http.ListenAndServe(":8080", nil)
