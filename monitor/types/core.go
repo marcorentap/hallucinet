@@ -1,18 +1,26 @@
 package types
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type HallucinetConfig struct {
-	NetworkName string
+	NetworkName  string
+	SqlitePath   string
+	DomainSuffix string
+	HostsPath    string
 }
 
 type HallucinetContext struct {
 	Config    HallucinetConfig
 	EventChan chan HallucinetEvent
+	DB        *sql.DB
 }
 
 type HallucinetEvent struct {
 	Kind          HallucinetEventKind
+	ContainerIP   string
 	ContainerID   string
 	ContainerName string
 	NetworkID     string

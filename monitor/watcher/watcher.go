@@ -41,12 +41,21 @@ func getContainerName(cli *client.Client, containerID string) string {
 	return conJson.Name
 }
 
+func getContainerIP(cli *client.Client, containerID string, networkName string) string {
+	conJson, err := cli.ContainerInspect(context.Background(), containerID)
+	if err != nil {
+		log.Panicf("Cannot inspect container %v: %v\n", containerID, err)
+	}
+	return conJson.NetworkSettings.Networks[networkName].IPAddress
+}
+
 func TranslateDockerEvent(cli *client.Client, e events.Message) types.HallucinetEvent {
 	time := time.Now()
 	networkID := e.Actor.ID
 	networkName := e.Actor.Attributes["name"]
 	containerID := e.Actor.Attributes["container"]
 	containerName := getContainerName(cli, containerID)[1:]
+	containerIP := getContainerIP(cli, containerID, networkName)
 
 	var kind types.HallucinetEventKind
 	switch e.Action {
@@ -60,6 +69,7 @@ func TranslateDockerEvent(cli *client.Client, e events.Message) types.Hallucinet
 
 	return types.HallucinetEvent{
 		Kind:          kind,
+		ContainerIP:   containerIP,
 		ContainerID:   containerID,
 		ContainerName: containerName,
 		NetworkID:     networkID,
@@ -91,8 +101,10 @@ func publishExistingContainers(cli *client.Client, eventChan chan types.Hallucin
 
 		for networkName, setting := range container.NetworkSettings.Networks {
 			networkID := setting.NetworkID
+			containerIP := setting.IPAddress
 			eventChan <- types.HallucinetEvent{
 				Kind:          types.ContainerConnected,
+				ContainerIP:   containerIP,
 				ContainerID:   containerID,
 				ContainerName: containerName,
 				NetworkID:     networkID,
