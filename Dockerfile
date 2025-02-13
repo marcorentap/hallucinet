@@ -1,7 +1,13 @@
 FROM golang:1.23 AS builder
-COPY ./monitor /etc/monitor
+
 WORKDIR /etc/monitor
-RUN go mod tidy
+ 
+# Handle go dependencies separately so we can cache the downloads
+COPY ./monitor/go.mod ./monitor/go.sum /etc/monitor
+RUN go mod download
+
+# Then build
+COPY ./monitor /etc/monitor
 RUN go build -o /bin/monitor
 
 COPY --from=coredns/coredns:1.12.0 /coredns /bin/coredns
