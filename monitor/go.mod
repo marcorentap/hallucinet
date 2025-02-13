@@ -1,6 +1,6 @@
 module github.com/marcorentap/hallucinet
 
-go 1.23
+go 1.23.6
 
 require github.com/docker/docker v27.5.1+incompatible
 
@@ -29,5 +29,5 @@ require (
 	go.opentelemetry.io/otel/trace v1.34.0 // indirect
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/time v0.10.0 // indirect
-	gotest.tools/v3 v3.5.1 // indirect
+	gotest.tools/v3 v3.5.2 // indirect
 )
