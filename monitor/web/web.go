@@ -67,7 +67,7 @@ func getNetworkEntries(hctx types.HallucinetContext, networkName string) []Entry
 }
 
 func Serve(hctx types.HallucinetContext) {
-	handler := func(res http.ResponseWriter, req *http.Request) {
+	listContainers := func(res http.ResponseWriter, req *http.Request) {
 		var payload ResponsePayload
 		res.Header().Set("Access-Control-Allow-Origin", "*")
 		res.Header().Set("Access-Control-Allow-Methods", "GET")
@@ -94,6 +94,13 @@ func Serve(hctx types.HallucinetContext) {
 
 		fmt.Fprintln(res, string(jsonPayload))
 	}
-	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8080", nil)
+
+	serveWebUI := func(res http.ResponseWriter, req *http.Request) {
+		fs := http.FileServer(http.Dir("/etc/hallucinet/webui"))
+		fs.ServeHTTP(res, req)
+	}
+
+	http.HandleFunc("/containers", listContainers)
+	http.HandleFunc("/", serveWebUI)
+	http.ListenAndServe(":80", nil)
 }

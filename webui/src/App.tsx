@@ -39,7 +39,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8080")
+        const response = await fetch(`http://${window.location.hostname}/containers`)
         if (!response.ok) throw new Error("Network response was not ok")
         const networkData = await response.json()
         setData(networkData)
