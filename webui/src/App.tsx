@@ -39,7 +39,8 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://${window.location.hostname}/containers`)
+        // const response = await fetch(`http://${window.location.hostname}/containers`)
+        const response = await fetch(`http://hallucinet.test/containers`)
         if (!response.ok) throw new Error("Network response was not ok")
         const networkData = await response.json()
         setData(networkData)
@@ -65,7 +66,7 @@ export default function App() {
           Hallucinet
         </p>
         <Card className="m-5">
-          <CardContent>
+          <CardContent className="mt-5">
             <Table>
               <TableHeader>
                 <TableRow>
