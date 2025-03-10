@@ -10,6 +10,8 @@ type HallucinetConfig struct {
 	SqlitePath   string
 	DomainSuffix string
 	HostsPath    string
+	Port         string
+	Host         string
 }
 
 type HallucinetContext struct {

@@ -21,6 +21,7 @@ func NewHallucinetConfig() types.HallucinetConfig {
 		SqlitePath:   getEnvOrDefault("DB_PATH", "/var/hallucinet/hallucinet.db"),
 		DomainSuffix: getEnvOrDefault("DOMAIN_SUFFIX", ".test"),
 		HostsPath:    getEnvOrDefault("HOSTS_PATH", "/var/hallucinet/hosts"),
-		Post:         getEnvOrDefault("PORT", "80"),
+		Port:         getEnvOrDefault("PORT", "80"),
+		Host:         getEnvOrDefault("HOST", "0.0.0.0"),
 	}
 }

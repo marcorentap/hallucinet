@@ -95,6 +95,7 @@ func Serve(hctx types.HallucinetContext) {
 		fmt.Fprintln(res, string(jsonPayload))
 	}
 
+	addr := fmt.Sprintf("%v:%v", hctx.Config.Host, hctx.Config.Port)
 	http.HandleFunc("/containers", listContainers)
-	http.ListenAndServe(":80", nil)
+	http.ListenAndServe(addr, nil)
 }
