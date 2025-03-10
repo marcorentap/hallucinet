@@ -1,7 +1,13 @@
 import { PropsWithChildren, useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/card";
-
 
 export function SectionHeading(props: PropsWithChildren) {
   return (
@@ -20,46 +26,48 @@ export function HallucinetNetwork(props: PropsWithChildren) {
 }
 
 interface Container {
-  ContainerID: string
-  ContainerName: string
-  ContainerIP: string
+  ContainerID: string;
+  ContainerName: string;
+  ContainerIP: string;
 }
 
 interface NetworkData {
-  HallucinetNetwork: string
+  HallucinetNetwork: string;
   Networks: {
-    [key: string]: Container[]
-  }
+    [key: string]: Container[];
+  };
 }
-
 export default function App() {
-  const [data, setData] = useState<NetworkData | null>(null)
-  const [error, setError] = useState<string>("")
+  const [data, setData] = useState<NetworkData | null>(null);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const response = await fetch(`http://${window.location.hostname}/containers`)
-        const response = await fetch(`http://hallucinet.test/containers`)
-        if (!response.ok) throw new Error("Network response was not ok")
-        const networkData = await response.json()
-        setData(networkData)
+        console.log("retrieving contianers");
+        const response = await fetch(
+          `http://${window.location.hostname}/api/v1/containers`,
+        );
+        if (!response.ok) throw new Error("Network response was not ok");
+        const networkData = await response.json();
+        setData(networkData);
       } catch (err) {
-        setError("Failed to fetch network data")
-        console.error(err)
+        setError("Failed to fetch network data");
+        console.error(err);
       }
-    }
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
-  if (error) return <div className="text-red-500 p-4">{error}</div>
-  if (!data) return <></>
+  if (error) return <div className="text-red-500 p-4">{error}</div>;
+  if (!data) return <></>;
 
-  const hallucinetContainers = data.Networks[data.HallucinetNetwork] || []
-  const otherNetworks = Object.entries(data.Networks).filter(([name]) => name !== data.HallucinetNetwork)
+  const hallucinetContainers = data.Networks[data.HallucinetNetwork] || [];
+  const otherNetworks = Object.entries(data.Networks).filter(
+    ([name]) => name !== data.HallucinetNetwork,
+  );
   return (
-
     <div className="w-screen">
       <div className="max-w-7xl mx-auto p-10 min-h-screen flex flex-col">
         <p className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-center m-4">
@@ -81,7 +89,9 @@ export default function App() {
                   <TableRow key={container.ContainerID}>
                     <TableCell>{container.ContainerName}.test</TableCell>
                     <TableCell>{container.ContainerIP}</TableCell>
-                    <TableCell className="font-mono">{container.ContainerID.slice(0, 12)}</TableCell>
+                    <TableCell className="font-mono">
+                      {container.ContainerID.slice(0, 12)}
+                    </TableCell>
                     <TableCell>{container.ContainerName}</TableCell>
                   </TableRow>
                 ))}
@@ -111,7 +121,9 @@ export default function App() {
                     {containers.map((container) => (
                       <TableRow key={container.ContainerID}>
                         <TableCell>{container.ContainerIP}</TableCell>
-                        <TableCell className="font-mono">{container.ContainerID.slice(0, 12)}</TableCell>
+                        <TableCell className="font-mono">
+                          {container.ContainerID.slice(0, 12)}
+                        </TableCell>
                         <TableCell>{container.ContainerName}</TableCell>
                       </TableRow>
                     ))}
@@ -125,4 +137,3 @@ export default function App() {
     </div>
   );
 }
-

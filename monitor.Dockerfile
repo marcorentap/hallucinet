@@ -12,7 +12,7 @@ RUN go build -o /bin/monitor
 
 COPY --from=coredns/coredns:1.12.0 /coredns /bin/coredns
 
-COPY entrypoint.sh /entrypoint.sh
+COPY monitor.entrypoint.sh /entrypoint.sh
 COPY Corefile /etc/hallucinet/Corefile
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
