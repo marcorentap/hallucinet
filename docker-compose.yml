@@ -1,9 +1,9 @@
 services:
   nginx:
-    image: nginx:1.27.4
     build:
       context: .
       dockerfile: webui.Dockerfile
+    image: marcorentap/hallucinet
     container_name: hallucinet
     networks:
       hallucinet:
