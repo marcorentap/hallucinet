@@ -95,12 +95,6 @@ func Serve(hctx types.HallucinetContext) {
 		fmt.Fprintln(res, string(jsonPayload))
 	}
 
-	serveWebUI := func(res http.ResponseWriter, req *http.Request) {
-		fs := http.FileServer(http.Dir("/etc/hallucinet/webui"))
-		fs.ServeHTTP(res, req)
-	}
-
 	http.HandleFunc("/containers", listContainers)
-	http.HandleFunc("/", serveWebUI)
 	http.ListenAndServe(":80", nil)
 }

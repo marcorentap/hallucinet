@@ -1,15 +1,26 @@
 services:
-  hallucinet:
-    image: marcorentap/hallucinet
-    build: .
+  nginx:
+    image: nginx:1.27.4
     container_name: hallucinet
-    restart: always
+    networks:
+      hallucinet:
+        ipv4_address: 192.168.100.2
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+  backend:
+    image: marcorentap/hallucinet-backend
+    build:
+      context: .
+      dockerfile: monitor.Dockerfile
+    container_name: hallucinet-backend
+    hostname: hallucinet-backend
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       hallucinet:
-        ipv4_address: 192.168.100.2
-      
+        ipv4_address: 192.168.100.3
+  # frontend:
+
 networks:
   hallucinet:
     name: hallucinet
