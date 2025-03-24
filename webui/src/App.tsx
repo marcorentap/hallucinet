@@ -87,7 +87,11 @@ export default function App() {
               <TableBody>
                 {hallucinetContainers.map((container) => (
                   <TableRow key={container.ContainerID}>
-                    <TableCell>{container.ContainerName}.test</TableCell>
+                    <TableCell>
+                      <a href={"http://" + container.ContainerName + ".test"}>
+                        {container.ContainerName}.test
+                      </a>
+                    </TableCell>
                     <TableCell>{container.ContainerIP}</TableCell>
                     <TableCell className="font-mono">
                       {container.ContainerID.slice(0, 12)}
